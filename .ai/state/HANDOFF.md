@@ -1,32 +1,42 @@
 # Handoff
 
-## Public hub implementation - 2026-10-11
+## Public launch verified - 2026-10-11
 
-Docusaurus source, curated catalog, starter docs, and trusted Pages workflow are prepared
-on `feature/inthefog-hub`. The owner authorized publishing this bounded launch
-without ADO; private delivery tracking remains outside the public repository.
-Feature PR checks and review precede production publication.
+The hub is deployed from main at https://inthefog.cloud/.
+Launch commit: 64d31c9612567144b087c556dd05fbda8a593a42.
+Actions run 38193373331 and Pages deployment 7004847209 succeeded on trusted HCS
+Linux runners. Required PR review/checks passed before the main merge.
 
-Cloud validation passed: TypeScript, production build, four source/build/security tests,
-dependency audit with zero high/critical findings, and Chromium checks for keyboard,
-light/dark themes, catalog filtering/reset, documentation, 404 and mobile navigation/layout.
-Rendered screenshots were reviewed. Moderate upstream dependency advisories remain;
-the documented local braces patch includes a passing recursion regression test.
-All 24 distinct public catalog links returned HTTP 200 without authentication.
+Live HTTPS home, projects, about, /docs/, Azure Local, Hyper-V, Azure Arc and hybrid
+operations routes return 200. JS, CSS and the logo return 200. Unknown routes show
+the portal's useful 404. Both HTTP apex and www, and HTTPS www redirect to HTTPS
+inthefog.cloud. The certificate covers both hosts; HTTPS enforcement is enabled.
 
-Pages uses Actions and the apex custom domain. Main is protected; Issues are disabled.
-The pinned workflow runs on trusted HCS Linux jobs and skips fork PRs; contributions
-must enter a trusted branch before checks and merge. Actions execution, certificate
-provisioning, HTTPS, canonical redirects and live asset/route checks remain pending.
-No successful deployment exists yet for rollback.
+Cloud and actual Actions validation passed: TypeScript, production build,
+source/build/privacy/catalog tests, Chromium keyboard/light-dark/filter/mobile
+checks, and dependency audit with zero high/critical findings. There are 31
+reported moderate upstream advisories. The documented local braces patch includes
+a passing recursion regression. All 24 unique public catalog links were verified.
 
-Canonical scaffold generation completed; public agent metadata was sanitized after
-generation. All eight .ai files, agent bootstrap, thin Claude shim, intent, license,
-README and ignore rules passed local structural/secret-pattern checks. The hosted
-MCP cannot inspect Windows workspace paths; remote PASS was not claimed.
+HCS MCP now discovers and bootstraps this repository with hcs scope, web profile,
+main branch and the approved Docusaurus exception. App authentication resolves
+from the repository registry entry. Local canonical scaffold/secret-pattern checks
+passed. The hosted MCP cannot inspect Windows workspace paths; remote drift PASS
+is not claimed.
 
-Commands: cloud npm ci/build/typecheck/test/audit; npm run test:browser; local npm
-lockfile-only resolution, git diff --check and canonical scaffold generator.
-No Node build ran on the Windows VM. Private tracking and delivery records stay in
-private operations; this build consumes only approved documentation and catalog source.
+Issues are disabled and main is protected. Only trusted branches use the HCS
+runner and Pages credentials. Fork contributions must be reviewed and promoted to
+a trusted branch first. Private planning remains outside this repository; builds
+consume approved public documentation and the curated catalog only.
 
+The first successful deployment is the rollback baseline. Keep the last successful
+commit/run available and recover through reviewed revert PRs and the trusted workflow.
+No Node build ran on the Windows VM.
+
+Files: Docusaurus config, React home/projects/about, shared catalog, starter docs,
+Pages workflow, source/browser tests, dependency patch, intent/scaffold and state.
+Commands: cloud npm ci/build/typecheck/test/test:browser/audit; local canonical
+scaffold and secret checks; git diff --check; live HTTPS route/asset/redirect checks.
+
+Next: maintain the public catalog through deliberate publication review and the
+existing contribution workflow. Repository moves require a separate migration plan.

@@ -1,4 +1,4 @@
 # Current task
 
-Publish and validate the public InTheFog hub. Branch: feature/inthefog-hub.
-
+The initial public hub is deployed and verified at https://inthefog.cloud/.
+Publish this final verification handoff through the protected main workflow.
