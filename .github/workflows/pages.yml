@@ -1,0 +1,60 @@
+name: Validate and publish hub
+on:
+  push:
+    branches: [main, feature/inthefog-hub]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, hcs]
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Build and verify
+        run: |
+          #Requires -Version 7.0
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          npm ci
+          if ($LASTEXITCODE) { throw 'Dependency installation failed' }
+          npx playwright install --with-deps chromium
+          if ($LASTEXITCODE) { throw 'Browser installation failed' }
+          npm run build
+          if ($LASTEXITCODE) { throw 'Production build failed' }
+          npm run typecheck
+          if ($LASTEXITCODE) { throw 'Type checking failed' }
+          npm test
+          if ($LASTEXITCODE) { throw 'Site checks failed' }
+          npm run test:browser
+          if ($LASTEXITCODE) { throw 'Browser checks failed' }
+          npm audit --audit-level=high
+          if ($LASTEXITCODE) { throw 'Dependency audit failed' }
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: build
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: [self-hosted, linux, x64, hcs]
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        id: deployment
